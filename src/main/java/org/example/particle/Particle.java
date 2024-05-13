@@ -1,9 +1,11 @@
 package org.example.particle;
 
 import org.example.Collidable;
+import org.example.SelfCollidable;
 import org.example.SpatialElement;
+import org.example.VelocityDampener;
 
-public final class Particle implements Collidable, SpatialElement {
+public final class Particle implements SelfCollidable<Particle>, SpatialElement, Collidable, VelocityDampener {
 
     String color;
     int mass;
@@ -12,16 +14,20 @@ public final class Particle implements Collidable, SpatialElement {
     double velY;
     int x;
     int y;
+    double velocityDampener = 0.9;
 
 
+    @Override
     public int getXCoordinate() {
         return this.x;
     }
 
+    @Override
     public int getYCoordinate() {
         return this.y;
     }
 
+    @Override
     public void resolveCollision(Particle particle) {
         int dx = particle.getXCoordinate() - this.getXCoordinate();
         int dy = particle.getYCoordinate() - this.getYCoordinate();
@@ -34,10 +40,14 @@ public final class Particle implements Collidable, SpatialElement {
 
         double totalMass = this.mass + particle.mass;
 
-        this.velX = ((this.mass - particle.mass) / totalMass) * this.velX + (2 * particle.mass / totalMass) * particle.velX;
-        this.velY = ((this.mass - particle.mass) / totalMass) * this.velY + (2 * particle.mass / totalMass) * particle.velY;
-        particle.velX = (2 * this.mass / totalMass) * this.velX - ((this.mass - particle.mass) / totalMass) * particle.velX;
-        particle.velY = (2 * this.mass / totalMass) * this.velY - ((this.mass - particle.mass) / totalMass) * particle.velY;
+        this.velX = ((this.mass - particle.mass) / totalMass) * this.velX + (2 * particle.mass / totalMass)
+                * particle.velX * this.velocityDampener;
+        this.velY = ((this.mass - particle.mass) / totalMass) * this.velY + (2 * particle.mass / totalMass)
+                * particle.velY * this.velocityDampener;
+        particle.velX = (2 * this.mass / totalMass) * this.velX - ((this.mass - particle.mass) / totalMass)
+                * particle.velX * this.velocityDampener;
+        particle.velY = (2 * this.mass / totalMass) * this.velY - ((this.mass - particle.mass) / totalMass)
+                * particle.velY * this.velocityDampener;
 
         double overlap = (this.radius + particle.radius) - distance;
         double moveX = overlap * Math.cos(angle);
@@ -48,7 +58,22 @@ public final class Particle implements Collidable, SpatialElement {
         particle.y += (int) (moveY / 2);
     }
 
-    public int getBoundary(SpatialElement spatialElement) {
+    @Override
+    public void resolveCollision(SpatialElement element) {
+        int dx = element.getXCoordinate() - this.getXCoordinate();
+        int dy = element.getYCoordinate() - this.getYCoordinate();
+        double distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (!(distance < this.radius + element.getBoundary())) {
+            return;
+        }
+
+        this.velY = -this.velY * this.velocityDampener;
+        this.velX = -this.velX * this.velocityDampener;
+    }
+
+    @Override
+    public int getBoundary() {
         return this.radius;
     }
 
@@ -60,5 +85,10 @@ public final class Particle implements Collidable, SpatialElement {
         this.velY = velY;
         this.x = x;
         this.y = y;
+    }
+
+    @Override
+    public void setDampner(double velocity) {
+        this.velocityDampener = velocity;
     }
 }
