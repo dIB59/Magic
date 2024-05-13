@@ -17,6 +17,16 @@ public final class Particle implements SelfCollidable<Particle>, SpatialElement,
     double velocityDampener = 0.9;
 
 
+    public Particle(String color, int mass, int radius, int velX, int velY, int x, int y) {
+        this.color = color;
+        this.mass = mass;
+        this.radius = radius;
+        this.velX = velX;
+        this.velY = velY;
+        this.x = x;
+        this.y = y;
+    }
+
     @Override
     public int getXCoordinate() {
         return this.x;
@@ -75,16 +85,6 @@ public final class Particle implements SelfCollidable<Particle>, SpatialElement,
     @Override
     public int getBoundary() {
         return this.radius;
-    }
-
-    public Particle(String color, int mass, int radius, int velX, int velY, int x, int y) {
-        this.color = color;
-        this.mass = mass;
-        this.radius = radius;
-        this.velX = velX;
-        this.velY = velY;
-        this.x = x;
-        this.y = y;
     }
 
     @Override

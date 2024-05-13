@@ -2,6 +2,6 @@ package org.example;
 
 public interface Collidable {
 
-    public void resolveCollision(SpatialElement element);
+    void resolveCollision(SpatialElement element);
 
 }
