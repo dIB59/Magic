@@ -1,11 +1,8 @@
 package org.example.particle;
 
-import org.example.Collidable;
-import org.example.SelfCollidable;
-import org.example.SpatialElement;
-import org.example.VelocityDampener;
+import org.example.*;
 
-public final class Particle implements SelfCollidable<Particle>, SpatialElement, Collidable, VelocityDampener {
+final class Particle implements SelfCollidable<Particle>, MovableSpatialElement, Collidable, VelocityDampener {
 
     String color;
     int mass;
@@ -90,5 +87,25 @@ public final class Particle implements SelfCollidable<Particle>, SpatialElement,
     @Override
     public void setDampner(double velocity) {
         this.velocityDampener = velocity;
+    }
+
+    @Override
+    public double getDampner() {
+        return this.velocityDampener;
+    }
+
+    @Override
+    public double getMass() {
+        return this.mass;
+    }
+
+    @Override
+    public double getVelocityX() {
+        return this.velX;
+    }
+
+    @Override
+    public double getVelocityY() {
+        return this.velY;
     }
 }
